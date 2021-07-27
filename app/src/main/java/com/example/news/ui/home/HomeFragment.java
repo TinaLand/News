@@ -68,7 +68,6 @@ public class HomeFragment extends Fragment implements CardStackListener {
                                 Log.d("HomeFragment", newsResponse.toString());
                             }
                         });
-
     }
 
     @Override
