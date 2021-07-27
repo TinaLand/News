@@ -34,7 +34,6 @@ public class CardSwipeAdapter extends RecyclerView.Adapter<CardSwipeAdapter.Card
         return new CardSwipeViewHolder(view);
     }
 
-
     @Override
     public void onBindViewHolder(@NonNull CardSwipeViewHolder holder, int position) {
         Article article = articles.get(position);

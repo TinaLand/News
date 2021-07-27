@@ -18,6 +18,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SearchNewsAdapter extends RecyclerView.Adapter<SearchNewsAdapter.SearchNewsViewHolder> {
+    interface ItemCallback {
+        void onOpenDetails(Article article);
+    }
+
+    private ItemCallback itemCallback;
+
+    public void setItemCallback(ItemCallback itemCallback) {
+        this.itemCallback = itemCallback;
+    }
+
     // 1. Supporting data:
     private List<Article> articles = new ArrayList<>();
 
@@ -30,10 +40,10 @@ public class SearchNewsAdapter extends RecyclerView.Adapter<SearchNewsAdapter.Se
     @NonNull
     @Override
     public SearchNewsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_news_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.search_news_item, parent, false);
         return new SearchNewsViewHolder(view);
     }
-
 
     @Override
     public void onBindViewHolder(@NonNull SearchNewsViewHolder holder, int position) {
@@ -41,6 +51,7 @@ public class SearchNewsAdapter extends RecyclerView.Adapter<SearchNewsAdapter.Se
         holder.favoriteImageView.setImageResource(R.drawable.ic_favorite_24dp);
         holder.itemTitleTextView.setText(article.title);
         Picasso.get().load(article.urlToImage).into(holder.itemImageView);
+        holder.itemView.setOnClickListener(v -> itemCallback.onOpenDetails(article));
     }
 
     @Override

@@ -1,8 +1,9 @@
 package com.example.news.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Article {
+public class Article implements Serializable {
     public String author;
     public String content;
 
