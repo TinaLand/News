@@ -1,7 +1,6 @@
 package com.example.news.ui.search;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,10 +9,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.news.databinding.FragmentSearchBinding;
+import com.example.news.repository.NewsRepository;
+import com.example.news.repository.NewsViewModelFactory;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,23 +28,16 @@ public class SearchFragment extends Fragment {
     private SearchViewModel viewModel;
     private FragmentSearchBinding binding;
 
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-      binding = FragmentSearchBinding.inflate(inflater, container, false);
-      return binding.getRoot();
+    public SearchFragment() {
+        // Required empty public constructor
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-
-        // ... existing code. Do not delete or replace!
-        newsAdapter.setItemCallback(article -> {
-            SearchFragmentDirections.ActionNavigationSearchToNavigationDetails direction = SearchFragmentDirections.actionNavigationSearchToNavigationDetails(article);
-            NavHostFragment.findNavController(SearchFragment.this).navigate(direction);
-        });
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        binding = FragmentSearchBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
@@ -49,9 +45,14 @@ public class SearchFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         SearchNewsAdapter newsAdapter = new SearchNewsAdapter();
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(requireContext(), 2);
-        binding.newsResultsRecyclerView.setLayoutManager(gridLayoutManager);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(requireContext(), 2);
+        binding.newsResultsRecyclerView.setLayoutManager(layoutManager);
         binding.newsResultsRecyclerView.setAdapter(newsAdapter);
+
+        newsAdapter.setItemCallback(article -> {
+            SearchFragmentDirections.ActionNavigationSearchToNavigationDetails direction = SearchFragmentDirections.actionNavigationSearchToNavigationDetails(article);
+            NavHostFragment.findNavController(SearchFragment.this).navigate(direction);
+        });
 
         binding.newsSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -69,14 +70,16 @@ public class SearchFragment extends Fragment {
             }
         });
 
+        NewsRepository repository = new NewsRepository(getContext());
+        viewModel = new ViewModelProvider(this, new NewsViewModelFactory(repository))
+                .get(SearchViewModel.class);
         viewModel
                 .searchNews()
                 .observe(
                         getViewLifecycleOwner(),
                         newsResponse -> {
                             if (newsResponse != null) {
-                                Log.d("SearchFragment", newsResponse.toString());
-                                                      newsAdapter.setArticles(newsResponse.articles);
+                                newsAdapter.setArticles(newsResponse.articles);
                             }
                         });
     }
