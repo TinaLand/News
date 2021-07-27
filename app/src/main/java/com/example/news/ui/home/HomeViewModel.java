@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
+import com.example.news.model.Article;
 import com.example.news.model.NewsResponse;
 import com.example.news.repository.NewsRepository;
 
@@ -23,5 +24,8 @@ public class HomeViewModel extends ViewModel {
 
     public LiveData<NewsResponse> getTopHeadlines() {
         return Transformations.switchMap(countryInput, repository::getTopHeadlines);
+    }
+    public void setFavoriteArticleInput(Article article) {
+        repository.favoriteArticle(article);
     }
 }

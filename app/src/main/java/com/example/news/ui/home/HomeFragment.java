@@ -36,7 +36,6 @@ public class HomeFragment extends Fragment implements CardStackListener {
     private CardStackLayoutManager layoutManager;
     private List<Article> articles;
 
-
     // ... existing code
 
     @Override
@@ -99,6 +98,8 @@ public class HomeFragment extends Fragment implements CardStackListener {
             Log.d("CardStackView", "Unliked " + layoutManager.getTopPosition());
         } else if (direction == Direction.Right) {
             Log.d("CardStackView", "Liked "  + layoutManager.getTopPosition());
+            Article article = articles.get(layoutManager.getTopPosition() -1);
+            viewModel.setFavoriteArticleInput(article);
         }
     }
 
